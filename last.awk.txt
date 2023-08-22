@@ -1,0 +1,23 @@
+BEGIN{
+print " Time1\t\t Time2\t\t Difference"}
+{
+time1=$1
+time2=$2
+hrs1=substr(time1,1,2)
+min1=substr(time1,3,2)
+sec1=substr(time1,5,2)
+hrs2=substr(time2,1,2)
+min2=substr(time2,3,2)
+sec2=substr(time2,5,2)
+total1 = hrs1*3600+min1*60+sec1
+total2 = hrs2*3600+min2*60+sec2
+diff =total2-total1
+hrs_diff = int(diff/3600)
+min_diff = int((diff%3600)/60)
+sec_diff = int(diff%60)
+formatted_diff = sprintf("%02d:%02d:%02d", hrs_diff, min_diff, sec_diff)
+formated_time1 = sprintf("%02d:%02d:%02d",hrs1,min1,sec1)
+formated_time2 = sprintf("%02d:%02d:%02d",hrs2,min2,sec2)
+print formated_time1"\t" formated_time2"\t" formatted_diff
+}
+END{}
