@@ -1,10 +1,329 @@
-BEGIN{
-count=0
+//seccessor and predsessor
+#include<iostream>
+using namespace std;
+class node{
+    public:
+    int key;
+    node* left;
+    node* right;
+    node* parent;
+    node(int );
+    void addLeft(node*);
+    void addRight(node*);
+    void setParent(node*);
+};
+node::node(int v){
+    key=v;
+    left=right=parent=NULL;
 }
-{	
-	if($1=="/*" && $NF=="*/"){
-		print("\n");
-		count ++;
-	}
+void node::addLeft(node *n){
+    left=n;
 }
-END{}
+void node::addRight(node *n){
+    right=n;
+}
+void node::setParent(node *n){
+    parent=n;
+}
+class bst{
+    public:
+    node* root;
+    bst (){
+        root = NULL;
+    }
+    void create();
+    void insert(node*);
+    void remove(int);
+    node* search(int);
+    void inorder();
+    node* minimum(node*);
+    node* maximun(node*);
+    void tinorder(node*);
+    node* inorder_successor(int);
+    node* inorder_predecessor(int);
+};
+node* bst :: maximun(node *r){
+    node* temp = r;
+    while(temp->left!=NULL){
+        temp=temp->left;
+    }
+    return temp;
+}
+node* bst :: minimum(node* r){
+    node* temp = r;
+    while(temp->right!=NULL){
+        temp=temp->right;
+    }
+    return temp;
+}
+node* bst :: inorder_successor(int v){
+    node* temp = search(v);
+    if(temp->right!=NULL){
+        return maximun(temp->right);
+    }
+    node* temp1=temp->parent;
+    while(temp1!=NULL && temp != temp1->left){
+        temp = temp1;
+        temp1 = temp1->parent;
+    }
+    return temp1;
+    
+}
+node* bst :: inorder_predecessor(int v){
+    node* temp = search(v);
+    if(temp->left!=NULL){
+        return minimum(temp->left);
+    }
+    node* temp1=temp->parent;
+    while(temp1!=NULL && temp != temp1->right){
+        temp = temp1;
+        temp1 = temp1->parent;
+    }
+    return temp1;
+    
+}
+void bst:: tinorder(node *t){
+    if(t==NULL){
+        return ;
+    }
+    tinorder(t->left);
+    cout<<t->key<<" ";
+    tinorder(t->right);
+    return;
+}
+void bst :: inorder(){
+    tinorder(root);
+    return;
+}
+void bst :: remove(int v){
+    if(search(v)==NULL){
+        cout<<"Element not found\n";
+        return ;
+    }
+    node *temp = search(v);
+    node* temp1;
+    temp1 =  temp->parent;
+    if(temp->left == NULL && temp->right == NULL){
+        if(temp == temp1->left){
+            temp1->left = NULL;
+            delete temp;
+        }
+        else{
+            temp1->right = NULL;
+            delete temp;
+        }
+    }
+    else if(temp->left == NULL){
+        if(temp == temp1->left){
+            temp1->left = temp->right;
+            (temp->right)->parent = temp1;
+            delete temp;
+        }
+        else{
+            temp1->right = temp->right;
+            (temp->right)->parent = temp1;
+            delete temp;
+        }
+    }
+    else if(temp->right ==NULL){
+        if(temp == temp1->left){
+            temp1->left = temp->left;
+            (temp->left)->parent = temp1;
+            delete temp;
+        }
+        else{
+            temp1->right = temp->left;
+            (temp->left)->parent = temp1;
+            delete temp;
+        }
+    }
+    else{
+        node * temp2;
+        temp2 = temp->left;
+        node * temp3;
+        temp3 = temp2;
+        while(temp2->right !=NULL){
+            temp2 = temp2->right;
+        }
+        node* temp4 = temp2;
+        node* temp5 = new node(temp4->key);
+        // cout<<temp5->key<<endl;
+        remove(temp4->key);
+        if(temp == temp1->left){
+            temp1->left = temp5;
+            temp5->parent = temp1;
+            temp5->left = temp->left;
+            (temp->left)->parent = temp5;
+            temp5->right = temp->right;
+            (temp->right)->parent = temp5;
+            delete temp;
+        }
+        else{
+            temp1->right = temp5;
+            temp5->parent = temp1;
+            temp5->left = temp->left;
+            (temp->left)->parent = temp5;
+            temp5->right = temp->right;
+            (temp->right)->parent = temp5;
+            delete temp;
+        }
+    }
+}
+node* bst :: search(int v){
+    node* temp;
+    temp=root;
+    while(temp){
+        if(temp->key == v){
+            return temp;
+        }
+        else if(temp->key > v){
+            temp = temp->right;
+        }
+        else{
+            temp = temp->left;
+        }
+    }
+    return NULL;
+}
+void bst::create(){
+    root = NULL;
+}
+void bst :: insert(node* n){
+    if(root== NULL){
+        root = n;
+        return ;
+    }
+    //cout<<n->key<<" In insert function\n";
+    node *temp = root;
+    node *temp1 =NULL;
+    while(temp){
+        temp1=temp;
+        if((temp->key) > (n->key)){
+            //cout<<n->key<<" Inside while loop for right\n";
+            temp = temp->right;
+        }
+        else{
+            //cout<<n->key<<" Inside while loop for left\n";
+            temp = temp->left;
+        }
+    }
+    if(temp1->key > n->key){
+        //cout<<n->key<<" Adding to right\n";
+        n->setParent(temp1);
+        temp1->addRight(n);
+        
+    }
+    else{
+        //cout<<n->key<<" Adding to left\n";
+        n->setParent(temp1);
+        temp1->addLeft(n);
+        
+    }
+}
+int main(){
+    bst *b = NULL;
+    b = new bst();
+    int v;
+    for(int i=0;i<16;i++){
+        cin>>v;
+        node* h2 = new node(v);
+        b->insert(h2);
+    }
+    b->inorder();
+    cout<<endl;
+
+    int v1;
+    
+        cin>>v1;
+        b->remove(v1);
+        b->inorder();
+        cout<<endl;
+    
+        // cin>>v1;
+        // b->remove(v1);
+        // b->inorder();
+        // cout<<endl;
+
+        // cin>>v1;
+        // b->remove(v1);
+        // b->inorder();
+        // cout<<endl;
+
+        // cin>>v1;
+        // b->remove(v1);
+        // b->inorder();
+        // cout<<endl;
+        // cin>>v1;
+        // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->remove(v1);
+        // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->inorder();
+        // cout<<endl;
+
+        // cin>>v1;
+        // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->remove(v1);
+        // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->inorder();
+        // cout<<endl;
+
+        // cin>>v1;
+        // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->remove(v1);
+        // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->inorder();
+        // cout<<endl;
+
+        cin>>v1;
+        b->remove(v1);
+        b->inorder();
+        cout<<endl;
+        // // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->remove(v1);
+        // // cout<<(b->inorder_predecessor(v1))->key<<endl;
+        // // cout<<(b->inorder_successor(v1))->key<<endl;
+        // b->inorder();
+        // cout<<endl;
+    // cin>>v1;
+    // cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+
+    // cin>>v1;
+    // cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+
+    // cin>>v1;
+    // cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+
+    // //cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+    // b->remove(v1);
+    // //cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+    // b->inorder();
+    // cout<<endl;
+
+    // b->remove(v1);
+    // //cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+    // b->inorder();
+    // cout<<endl;
+
+    // cin>>v1;
+    // //cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+    // b->remove(v1);
+    // //cout<<(b->inorder_predecessor(v1))->key<<endl;
+    // cout<<(b->inorder_successor(v1))->key<<endl;
+    // b->inorder();
+
+    return 0;
+}
