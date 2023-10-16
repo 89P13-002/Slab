@@ -35,7 +35,8 @@ def main():
         print("Invalid input. Please enter a positive integer.")
         return
 
-    ip = list(range(1, n+1))
+    #ip = list(range(1,n+1))
+    ip = list(range(n, 0, -1))  # Generate a list in decreasing order from n to 1
     v = list(permutations(ip))
     ans = []
 
