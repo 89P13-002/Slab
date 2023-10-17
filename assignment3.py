@@ -59,7 +59,7 @@ if __name__ == "__main__":
 """
 Created on Mon Oct 16 20:55:26 2023
 
-@author: 91635
+ @author: 91635
 """
 # importing deque 
 from collections import deque
@@ -100,7 +100,7 @@ def to_get_shortest_path(src_row, src_col, dest_row, dest_col, n, maze):
             current = cell # assigns val of cell to varaiable current
             # To backtrack from destination to source 
             while current is not None:
-                path.append((current.row_pos+1,current.col_pos+1))
+                path.append((n-current.row_pos,current.col_pos+1))
                 current = current.parent
             return dist, path[::-1]  # Return distance and path in reverse order
 
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     src_row, src_col = map(int, input("Enter source cell (row col): ").split())
     dest_row, dest_col = map(int, input("Enter destination cell (row col): ").split())
 
-    shortest_distance, path = to_get_shortest_path(src_row-1, src_col-1, dest_row-1, dest_col-1, n, maze)
+    shortest_distance, path = to_get_shortest_path(n-src_row, src_col-1, n-dest_row, dest_col-1, n, maze)
 # check destination reachable or not
     if shortest_distance != -1: # if reachable
         print(f"Shortest distance from source to destination: {shortest_distance}")
