@@ -1,2 +1,2 @@
 # Slab
-Lab assignment for the course CS242
+Lab assignments for the course CS242
